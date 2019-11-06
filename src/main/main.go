@@ -54,7 +54,7 @@ func main() {
 	firstLoop(ipPort, passWord, url, tokenFile, endPointApi, serviceHealthCheckList, serviceInfo)
 	// 第二次循环，将存入redis的数据和已有数据进行比对，将合格结果写入到APIServer
 	for {
-		time.Sleep(3000 * time.Millisecond)
+		time.Sleep(2000 * time.Millisecond)
 		secondLoop(ipPort, passWord, url, tokenFile, contentType, endPointApi, endpointTemplate, serviceHealthCheckList, serviceInfo)
 	}
 }

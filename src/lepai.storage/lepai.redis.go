@@ -25,8 +25,8 @@ func redisconnect(ipPort, passWord string) *redis.Client {
 
 func RedisReset(ipPort, passWord string) {
 	client := redisconnect(ipPort, passWord)
-	err := client.FlushAll()
-	fmt.Println(err)
+	_ = client.FlushAll()
+	//fmt.Println(err)
 }
 
 func RedisSet(ipPort, passWord, name string, bodyContent interface{}) {
