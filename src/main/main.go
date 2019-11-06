@@ -2,6 +2,7 @@ package main
 
 import (
 	"conf"
+	"fmt"
 	"lepai.hc"
 	"lepai.k8sapi"
 	"lepai.storage"
@@ -39,6 +40,7 @@ func secondLoop(ipPort, passWord, url, tokenFile, contentType, endPointApi strin
 	for name, serviceList := range serviceHealthCheckList.(map[interface{}]interface{}) {
 		SuccessMapList, _, Port := lepai_hc.HealthCheck(serviceList)
 		if IsNil(SuccessMapList) == true {
+			fmt.Printf("SuccessMapList Of HealthCheck Name %v is %v !\n", name, SuccessMapList)
 			continue
 		}
 		RedisListGet := lepai_storage.RedisGet(ipPort, passWord, lepai_transfromation.Any2Str(name))
@@ -46,7 +48,6 @@ func secondLoop(ipPort, passWord, url, tokenFile, contentType, endPointApi strin
 		if err == 0 || err == 7 {
 			continue
 		}
-		//fmt.Println("CompareSuccessListWithRedisList: ", err)
 		name, nameSpace := lepai_yaml.YamlServiceInfo(serviceInfo, name)
 		yamlConverter := lepai_yaml.YamlFactory(name, nameSpace, Port, SuccessMapList, endpointTemplate)
 		_, bodyContent := lepai_k8sapi.APIServerPut(url, name, nameSpace, endPointApi, tokenFile, contentType, yamlConverter)

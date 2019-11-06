@@ -12,7 +12,6 @@ import (
 func APIServerGet(url, name, nameSpace, endPointApi, tokenFile string) (err error, bodyContent string) {
 	endPointApi = strings.Replace(endPointApi, "myNameSpaces", nameSpace, -1)
 	endPointApi = strings.Replace(endPointApi, "myEndPoints", name, -1)
-	//fmt.Println(endPointApi)
 	requestUrl := url + endPointApi
 	// 忽略证书校验
 	tr := &http.Transport{
@@ -42,7 +41,6 @@ func APIServerGet(url, name, nameSpace, endPointApi, tokenFile string) (err erro
 func APIServerPut(url, name, nameSpace, endPointApi, tokenFile, contentType, yamlConverter string) (err error, bodyContent string) {
 	endPointApi = strings.Replace(endPointApi, "myNameSpaces", nameSpace, -1)
 	endPointApi = strings.Replace(endPointApi, "myEndPoints", name, -1)
-	//fmt.Println(endPointApi)
 	requestUrl := url + endPointApi
 	// 忽略证书校验
 	tr := &http.Transport{

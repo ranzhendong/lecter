@@ -26,7 +26,6 @@ func InitLoadConfig() (interface{}, interface{}, interface{}, interface{}, inter
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
-	//fmt.Println(ConfigMap)
 	serviceHealthCheckList := ConfigMap["service_healthcheck_list"]
 	serviceInfo := ConfigMap["service_info"]
 	endpointTemplate := ConfigMap["endpoint_template"]

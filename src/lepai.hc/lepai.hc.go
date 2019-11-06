@@ -45,9 +45,9 @@ func CompareSuccessListWithRedisList(name, SuccessMapList interface{}, RedisList
 	subsets := RedisListGetMap["subsets"].([]interface{})[0]
 	addresses := subsets.(map[string]interface{})["addresses"]
 	if reflect.DeepEqual(addresses, SuccessMapList) {
-		fmt.Printf("name:%v {Addresses:%v == SuccessMapList: %v}", name, addresses, SuccessMapList)
+		fmt.Printf("{Name:%v} {Addresses:%v == SuccessMapList: %v}\n", name, addresses, SuccessMapList)
 		return
 	}
-	fmt.Printf("name:%v {Addresses:%v != SuccessMapList: %v}", name, addresses, SuccessMapList)
+	fmt.Printf("{Name:%v} {Addresses:%v != SuccessMapList: %v}\n", name, addresses, SuccessMapList)
 	return 1
 }
