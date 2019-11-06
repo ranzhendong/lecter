@@ -9,7 +9,6 @@ import (
 	"lepai.transformation"
 	"lepai.yaml"
 	"reflect"
-	"time"
 )
 
 func IsNil(i interface{}) bool {
@@ -56,18 +55,18 @@ func secondLoop(ipPort, passWord, url, tokenFile, contentType, endPointApi strin
 }
 
 func main() {
-	//conf.InitLoadConfig()
-	// read yaml conf from file
-	serviceHealthCheckList, serviceInfo, endpointTemplate, kubernetesConf, storageConf := conf.InitLoadConfig()
-	// get k8sapiserver info
-	url, contentType, endPointApi, tokenFile := lepai_yaml.YamlKubernetesInfo(kubernetesConf)
-	//  change serviceInfo's structure to serviceInfoMap
-	ipPort, passWord := lepai_yaml.YamlstorageConf(storageConf)
-	// 第一次for循环，将数据从apiserver拉取，存入到redis
-	firstLoop(ipPort, passWord, url, tokenFile, endPointApi, serviceHealthCheckList, serviceInfo)
-	// 第二次循环，将存入redis的数据和已有数据进行比对，将合格结果写入到APIServer
-	for {
-		time.Sleep(2000 * time.Millisecond)
-		go secondLoop(ipPort, passWord, url, tokenFile, contentType, endPointApi, endpointTemplate, serviceHealthCheckList, serviceInfo)
-	}
+	conf.InitLoadConfig()
+	//// read yaml conf from file
+	//serviceHealthCheckList, serviceInfo, endpointTemplate, kubernetesConf, storageConf := conf.InitLoadConfig()
+	//// get k8sapiserver info
+	//url, contentType, endPointApi, tokenFile := lepai_yaml.YamlKubernetesInfo(kubernetesConf)
+	////  change serviceInfo's structure to serviceInfoMap
+	//ipPort, passWord := lepai_yaml.YamlstorageConf(storageConf)
+	//// 第一次for循环，将数据从apiserver拉取，存入到redis
+	//firstLoop(ipPort, passWord, url, tokenFile, endPointApi, serviceHealthCheckList, serviceInfo)
+	//// 第二次循环，将存入redis的数据和已有数据进行比对，将合格结果写入到APIServer
+	//for {
+	//	time.Sleep(2000 * time.Millisecond)
+	//	go secondLoop(ipPort, passWord, url, tokenFile, contentType, endPointApi, endpointTemplate, serviceHealthCheckList, serviceInfo)
+	//}
 }

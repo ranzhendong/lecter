@@ -1,6 +1,7 @@
 package conf
 
 import (
+	"flag"
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -23,11 +24,26 @@ func changePath(pwd string) string {
 	return pwd
 }
 
+func conf(confFilePath string) string {
+	confFilePath = confFilePath + "config.yaml"
+	var absoluteconf string
+	var f *flag.Flag
+	flag.StringVar(&absoluteconf, "f", confFilePath, "default absolute conf is 'relative path+config.yaml'")
+	flag.Parse()
+	f = flag.Lookup("f")
+	if f.DefValue != f.Value.String() {
+		return f.Value.String()
+	}
+	return ""
+}
+
 func InitLoadConfig() (interface{}, interface{}, interface{}, interface{}, interface{}) {
 	var (
-		yamlContent  []uint8
-		confFilePath string
+		yamlContent            []uint8
+		confFilePath, confName string
 	)
+	ConfigMap := make(map[interface{}]interface{})
+	confName = "config.yaml"
 	pwd, err := os.Getwd()
 	log.Println("Script Execute Path", pwd)
 	if err != nil {
@@ -35,32 +51,36 @@ func InitLoadConfig() (interface{}, interface{}, interface{}, interface{}, inter
 		os.Exit(1)
 	}
 	executePath := changePath(pwd)
-	//第一次尝试读取配置
 	confFilePath = executePath + "/"
-	//fmt.Println(executePath)
-	//fmt.Println(confFilePath)
-	yamlContent, err = ioutil.ReadFile(confFilePath + "config.yaml")
+	NewConfFilePath := conf(confFilePath)
+	if NewConfFilePath != "" {
+		yamlContent, err = ioutil.ReadFile(NewConfFilePath)
+		goto AbsoluteConf
+	}
+	//第一次尝试读取配置
+	yamlContent, err = ioutil.ReadFile(confFilePath + confName)
 	if err != nil {
 		log.Println(err)
 		//第二次尝试读取配置
 		confFilePath = executePath + "/conf/"
 	}
-	yamlContent, err = ioutil.ReadFile(confFilePath + "config.yaml")
+	yamlContent, err = ioutil.ReadFile(confFilePath + confName)
 	if err != nil {
 		log.Println(err)
 		//第三次尝试读取配置
 		confFilePath = executePath + "/src/"
 	}
-	yamlContent, err = ioutil.ReadFile(confFilePath + "config.yamls")
+	yamlContent, err = ioutil.ReadFile(confFilePath + confName)
 	if err != nil {
 		log.Println(err)
 	}
+	fmt.Println(yamlContent)
+AbsoluteConf:
 	if yamlContent == nil {
 		panicInfo := "\nCan't Not Get The file Named 'config.yaml' From The Path \n1." +
 			executePath + "/\n2." + executePath + "/conf/\n3." + confFilePath + "\nPlease Check it !"
 		panic(panicInfo)
 	}
-	ConfigMap := make(map[interface{}]interface{})
 	err = yaml.Unmarshal([]byte(yamlContent), &ConfigMap)
 	if err != nil {
 		log.Fatalf("error: %v", err)
