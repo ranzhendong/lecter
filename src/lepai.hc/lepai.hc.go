@@ -28,11 +28,10 @@ func HealthCheck(serviceList interface{}) (interface{}, map[string]string, int) 
 		//SuccessMapList = append(SuccessMapList, IpMap)
 		SuccessMapList = append(SuccessMapList, map[string]interface{}{"ip": ip})
 	}
-	//fmt.Println("SuccessMapList, FailInfo", SuccessMapList, FailMapList)
 	return SuccessMapList, FailMapList, Port
 }
 
-func CompareSuccessListWithRedisList(SuccessMapList interface{}, RedisListGet string) (myError int) {
+func CompareSuccessListWithRedisList(name, SuccessMapList interface{}, RedisListGet string) (myError int) {
 	//fmt.Printf("SuccessMapList %v, RedisListGet %v", SuccessMapList, RedisListGet)
 	if RedisListGet == "" {
 		fmt.Println("RedisListGet CAN'T GET ")
@@ -43,15 +42,12 @@ func CompareSuccessListWithRedisList(SuccessMapList interface{}, RedisListGet st
 		fmt.Println("bodyContentByte json change err: ", err)
 		return 7
 	}
-	//fmt.Println("==============json str 转map=======================")
-	//fmt.Printf("eeeeee %T", RedisListGetMap)
-	//fmt.Println(RedisListGetMap["subsets"].([]interface{})[0])
 	subsets := RedisListGetMap["subsets"].([]interface{})[0]
 	addresses := subsets.(map[string]interface{})["addresses"]
 	if reflect.DeepEqual(addresses, SuccessMapList) {
-		fmt.Println("Addresses Is SuccessMapList", addresses, "==", SuccessMapList)
+		fmt.Printf("name:%v {Addresses:%v == SuccessMapList: %v}", name, addresses, SuccessMapList)
 		return
 	}
-	fmt.Println("Addresses Not SuccessMapList", addresses, "!=", SuccessMapList)
+	fmt.Printf("name:%v {Addresses:%v != SuccessMapList: %v}", name, addresses, SuccessMapList)
 	return 1
 }

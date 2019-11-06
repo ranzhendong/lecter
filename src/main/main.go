@@ -2,14 +2,22 @@ package main
 
 import (
 	"conf"
-	"fmt"
 	"lepai.hc"
 	"lepai.k8sapi"
 	"lepai.storage"
 	"lepai.transformation"
 	"lepai.yaml"
+	"reflect"
 	"time"
 )
+
+func IsNil(i interface{}) bool {
+	defer func() {
+		recover()
+	}()
+	vi := reflect.ValueOf(i)
+	return vi.IsNil()
+}
 
 func firstLoop(ipPort, passWord, url, tokenFile, endPointApi string, serviceHealthCheckList, serviceInfo interface{}) {
 	//每次重启脚本加入重置命令，将所有已经配置好的service进行删除
@@ -30,12 +38,15 @@ func firstLoop(ipPort, passWord, url, tokenFile, endPointApi string, serviceHeal
 func secondLoop(ipPort, passWord, url, tokenFile, contentType, endPointApi string, endpointTemplate, serviceHealthCheckList, serviceInfo interface{}) {
 	for name, serviceList := range serviceHealthCheckList.(map[interface{}]interface{}) {
 		SuccessMapList, _, Port := lepai_hc.HealthCheck(serviceList)
+		if IsNil(SuccessMapList) == true {
+			continue
+		}
 		RedisListGet := lepai_storage.RedisGet(ipPort, passWord, lepai_transfromation.Any2Str(name))
-		err := lepai_hc.CompareSuccessListWithRedisList(SuccessMapList, RedisListGet)
+		err := lepai_hc.CompareSuccessListWithRedisList(name, SuccessMapList, RedisListGet)
 		if err == 0 || err == 7 {
 			continue
 		}
-		fmt.Println("CompareSuccessListWithRedisList: ", err)
+		//fmt.Println("CompareSuccessListWithRedisList: ", err)
 		name, nameSpace := lepai_yaml.YamlServiceInfo(serviceInfo, name)
 		yamlConverter := lepai_yaml.YamlFactory(name, nameSpace, Port, SuccessMapList, endpointTemplate)
 		_, bodyContent := lepai_k8sapi.APIServerPut(url, name, nameSpace, endPointApi, tokenFile, contentType, yamlConverter)
@@ -55,6 +66,6 @@ func main() {
 	// 第二次循环，将存入redis的数据和已有数据进行比对，将合格结果写入到APIServer
 	for {
 		time.Sleep(2000 * time.Millisecond)
-		secondLoop(ipPort, passWord, url, tokenFile, contentType, endPointApi, endpointTemplate, serviceHealthCheckList, serviceInfo)
+		go secondLoop(ipPort, passWord, url, tokenFile, contentType, endPointApi, endpointTemplate, serviceHealthCheckList, serviceInfo)
 	}
 }

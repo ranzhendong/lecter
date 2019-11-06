@@ -116,13 +116,10 @@ func YamlConverter(name, namespace string, Port int, SuccessMapList, EndpointTem
 	metadata["name"] = name
 	metadata["namespace"] = namespace
 	NewEndpointTemplate.(map[interface{}]interface{})["metadata"] = metadata
-	//subsetss := endpointTemplate.(map[interface{}]interface{})["subsets"].([]interface{})[0]
-	//addresses := subsetss.(map[interface{}]interface{})["addresses"].([]interface{})
-	//portss := subsetss.(map[interface{}]interface{})["ports"].([]interface{})[0]
-	//port := portss.(map[interface{}]interface{})["port"].(int)
-	//protocol := portss.(map[interface{}]interface{})["protocol"].(string)
 	//对subsets修改
 	protocol := NewEndpointTemplate.(map[interface{}]interface{})["subsets"].([]interface{})[0].(map[interface{}]interface{})["ports"].([]interface{})[0].(map[interface{}]interface{})["protocol"].(string)
+	//如果SuccessMapList为空，但是需要提交EndpointTemplateYaml，
+	//不过这部分可以优化，将在前面进行空值判断，无需执行后续操作。
 	if IsNil(SuccessMapList) == true {
 		goto HEADLE
 	}
