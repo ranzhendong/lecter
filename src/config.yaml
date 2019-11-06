@@ -1,0 +1,64 @@
+kubernetes_conf:
+  url: https://172.16.0.60:6443
+  endpointapi: /api/v1/namespaces/myNameSpaces/endpoints/myEndPoints
+  content_type: application/yaml
+  # defalult token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+  # token_file: C:\Users\Administrator\go\my_script\src\lepai.token\token
+  token_file: C:\Users\Administrator\go\my_script\src\lepai.token\token
+
+# storage conf, one monment only one,if no password or db conf,default is "-"
+storage_conf:
+  redis:
+    ipport: 172.16.0.61:6379
+    password:
+# healthcheck service args
+service_info:
+  redis:
+    namespace: redis_namespace
+    name: redis_name
+  emqx:
+    namespace: emqx_namespace
+    name: emqx_name
+  ceph:
+    namespace: default
+    name: ceph
+
+# healthcheck service target list
+service_healthcheck_list:
+  redis:
+  - port: 38000
+  - iplist:
+    - name: node-01
+      ip: 192.168.101.61
+    - name: node-02
+      ip: 192.168.101.62
+    - name: node-03
+      ip: 192.168.101.63
+  emqx:
+  - port: 6443
+  - iplist:
+    - name: node-01
+      ip: 172.16.0.60
+    - name: node-02
+      ip: 172.16.0.61
+  ceph:
+  - port: 38000
+  - iplist:
+    - name: kid-01
+      ip: 172.16.0.61
+    - name: kid-02
+      ip: 172.16.0.62
+# endpoint template，name and namespace will be exchanged
+endpoint_template:
+  kind: Endpoints
+  apiVersion: v1
+  metadata:
+    name: ceph
+    namespace: default
+  subsets:
+    - addresses:
+        - ip: 10.0.0.71
+        - ip: 10.0.0.72
+      ports:
+        - port: 8080
+          protocol: TCP
