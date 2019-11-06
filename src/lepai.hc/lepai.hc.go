@@ -2,11 +2,15 @@ package lepai_hc
 
 import (
 	"encoding/json"
-	"fmt"
 	"lepai.net"
+	"log"
 	"reflect"
 	"strconv"
 )
+
+func init() {
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+}
 
 func HealthCheck(serviceList interface{}) (interface{}, map[string]string, int) {
 	var (
@@ -34,20 +38,20 @@ func HealthCheck(serviceList interface{}) (interface{}, map[string]string, int) 
 func CompareSuccessListWithRedisList(name, SuccessMapList interface{}, RedisListGet string) (myError int) {
 	//fmt.Printf("SuccessMapList %v, RedisListGet %v", SuccessMapList, RedisListGet)
 	if RedisListGet == "" {
-		fmt.Println("RedisListGet CAN'T GET ")
+		log.Println("RedisListGet CAN'T GET ")
 		return 7
 	}
 	var RedisListGetMap map[string]interface{}
 	if err := json.Unmarshal([]byte(RedisListGet), &RedisListGetMap); err != nil {
-		fmt.Println("bodyContentByte json change err: ", err)
+		log.Println("bodyContentByte json change err: ", err)
 		return 7
 	}
 	subsets := RedisListGetMap["subsets"].([]interface{})[0]
 	addresses := subsets.(map[string]interface{})["addresses"]
 	if reflect.DeepEqual(addresses, SuccessMapList) {
-		fmt.Printf("{Name:%v} {Addresses:%v == SuccessMapList: %v}\n", name, addresses, SuccessMapList)
+		log.Printf("{Name:%v} {Addresses:%v == SuccessMapList: %v}\n", name, addresses, SuccessMapList)
 		return
 	}
-	fmt.Printf("{Name:%v} {Addresses:%v != SuccessMapList: %v}\n", name, addresses, SuccessMapList)
+	log.Printf("{Name:%v} {Addresses:%v != SuccessMapList: %v}\n", name, addresses, SuccessMapList)
 	return 1
 }

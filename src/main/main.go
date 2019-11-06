@@ -56,6 +56,7 @@ func secondLoop(ipPort, passWord, url, tokenFile, contentType, endPointApi strin
 }
 
 func main() {
+	//conf.InitLoadConfig()
 	// read yaml conf from file
 	serviceHealthCheckList, serviceInfo, endpointTemplate, kubernetesConf, storageConf := conf.InitLoadConfig()
 	// get k8sapiserver info

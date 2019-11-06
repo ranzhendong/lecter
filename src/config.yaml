@@ -2,8 +2,10 @@ kubernetes_conf:
   url: https://172.16.0.60:6443
   endpointapi: /api/v1/namespaces/myNameSpaces/endpoints/myEndPoints
   content_type: application/yaml
-  # defalult token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-  # token_file: C:\Users\Administrator\go\my_script\src\lepai.token\token
+  # if token_file is none, linux: /var/run/secrets/kubernetes.io/serviceaccount/token(been compiled)
+  #                       windows: C:\Users\Administrator\go\my_script\src\lepai.token\token(Not compile)
+  # if token_file is 'default', linux and windows: token or conf/token(execute script relative path)
+  # or you can specify the token file path
   token_file: C:\Users\Administrator\go\my_script\src\lepai.token\token
 
 # storage conf, one monment only one,if no password or db conf,default is "-"
