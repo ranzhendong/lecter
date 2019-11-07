@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"lepai.deepcopy"
 	"log"
+	"os"
 	"reflect"
 	"runtime"
 	"strings"
@@ -23,16 +24,69 @@ func IsNil(i interface{}) bool {
 	return vi.IsNil()
 }
 
-func readtokenFile(tokenFile string) string {
+func changePath(pwd string) string {
 	operating := runtime.GOOS
 	if operating == "windows" {
-		tokenFile = strings.Replace(tokenFile, "\\", "/", -1)
+		pwd = strings.Replace(pwd, "\\", "/", -1)
+		return pwd
 	}
-	tokenFileContent, err := ioutil.ReadFile(tokenFile)
+	return pwd
+}
+
+func readTokenFile() string {
+	var TokenFile, linuxTokenFile, winTokenFile string
+	operating := runtime.GOOS
+	linuxTokenFile = "var/run/secrets/kubernetes.io/serviceaccount/token"
+	winTokenFile = "C:\\Users\\Administrator\\go\\my_script\\src\\lepai.token\\token"
+	if operating == "windows" {
+		TokenFile = strings.Replace(winTokenFile, "\\", "/", -1)
+	} else {
+		TokenFile = linuxTokenFile
+	}
+	tokenFileContent, err := ioutil.ReadFile(TokenFile)
 	if err != nil {
 		log.Fatal(err)
 	}
-	tokenFile = string(tokenFileContent)
+	if tokenFileContent == nil {
+		panicInfo := "\nCan't Not Get The Token file Name From The \n1." +
+			linuxTokenFile + "\n2." + winTokenFile + "\n" + "\nPlease Check it !"
+		panic(panicInfo)
+	}
+	return string(tokenFileContent)
+}
+
+func readTokenFileDefault() string {
+	var (
+		tokenFileContent []uint8
+		tokenFilePath    string
+	)
+	pwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+		os.Exit(1)
+	}
+	executePath := changePath(pwd)
+	tokenFilePath = executePath + "/conf/token"
+	tokenFileContent, err = ioutil.ReadFile(tokenFilePath)
+	if err != nil {
+		log.Println(err)
+		//第二次尝试读取配置
+		tokenFilePath = executePath + "/token"
+	} else {
+		goto tokenFile
+	}
+	tokenFileContent, err = ioutil.ReadFile(tokenFilePath)
+	if err != nil {
+		log.Println(err)
+		//第二次尝试读取配置
+		tokenFilePath = executePath + "/token"
+	}
+tokenFile:
+	if tokenFileContent == nil {
+		panicInfo := "\nCan't Not Get The Token file Name From The Path \n1." +
+			executePath + "/\n2." + executePath + "/conf/\n" + "\nPlease Check it !"
+		panic(panicInfo)
+	}
 	return string(tokenFileContent)
 }
 
@@ -84,23 +138,21 @@ func YamlKubernetesInfo(kubernetesConf interface{}) (url, contentType, endPointA
 	var tokenFile string
 	defer func() {
 		// recover() 捕获panic异常，获得程序执行权。
-		err := recover()
-		// recover()后的内容会正常打印
-		if tokenFile == "" {
-			tokenFile = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-		}
-		fmt.Println("tokenDir:", tokenFile)
-		if err != nil {
-			fmt.Println(err) // runtime error: index out of range
-		}
-		tokenFileContent = readtokenFile(tokenFile)
+		_ = recover()
+		tokenFileContent = readTokenFile()
+		fmt.Println(tokenFileContent)
 	}()
 	// 异常处理，通过recover获取执行权
 	contentType = kubernetesConf.(map[interface{}]interface{})["content_type"].(string)
 	endPointApi = kubernetesConf.(map[interface{}]interface{})["endpointapi"].(string)
 	url = kubernetesConf.(map[interface{}]interface{})["url"].(string)
 	tokenFile = kubernetesConf.(map[interface{}]interface{})["token_file"].(string)
-	tokenFileContent = readtokenFile(tokenFile)
+	if tokenFile == "default" {
+		tokenFileContent = readTokenFileDefault()
+	} else {
+		tokenFileContent = readTokenFile()
+	}
+	fmt.Println(tokenFileContent)
 	return url, contentType, endPointApi, tokenFileContent
 }
 
