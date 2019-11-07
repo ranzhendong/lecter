@@ -1,3 +1,9 @@
+my_conf:
+  # 健康检查间隔，单位毫秒
+  interval: 2000
+  # ip port ping超时时间
+  pingtimeout: 2000
+
 kubernetes_conf:
   url: https://172.16.0.60:6443
   endpointapi: /api/v1/namespaces/myNameSpaces/endpoints/myEndPoints

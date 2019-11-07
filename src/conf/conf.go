@@ -37,7 +37,7 @@ func conf(confFilePath string) string {
 	return ""
 }
 
-func InitLoadConfig() (interface{}, interface{}, interface{}, interface{}, interface{}) {
+func InitLoadConfig() (serviceHealthCheckList, serviceInfo, endpointTemplate, kubernetesConf, storageConf, MyConf interface{}) {
 	var (
 		yamlContent            []uint8
 		confFilePath, confName string
@@ -63,18 +63,22 @@ func InitLoadConfig() (interface{}, interface{}, interface{}, interface{}, inter
 		log.Println(err)
 		//第二次尝试读取配置
 		confFilePath = executePath + "/conf/"
+	} else {
+		goto AbsoluteConf
 	}
 	yamlContent, err = ioutil.ReadFile(confFilePath + confName)
 	if err != nil {
 		log.Println(err)
 		//第三次尝试读取配置
 		confFilePath = executePath + "/src/"
+	} else {
+		goto AbsoluteConf
 	}
 	yamlContent, err = ioutil.ReadFile(confFilePath + confName)
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println(yamlContent)
+	//fmt.Println(yamlContent)
 AbsoluteConf:
 	if yamlContent == nil {
 		panicInfo := "\nCan't Not Get The file Named 'config.yaml' From The Path \n1." +
@@ -86,10 +90,11 @@ AbsoluteConf:
 		log.Fatalf("error: %v", err)
 	}
 	fmt.Println(ConfigMap)
-	serviceHealthCheckList := ConfigMap["service_healthcheck_list"]
-	serviceInfo := ConfigMap["service_info"]
-	endpointTemplate := ConfigMap["endpoint_template"]
-	kubernetesConf := ConfigMap["kubernetes_conf"]
-	storageConf := ConfigMap["storage_conf"]
-	return serviceHealthCheckList, serviceInfo, endpointTemplate, kubernetesConf, storageConf
+	serviceHealthCheckList = ConfigMap["service_healthcheck_list"]
+	serviceInfo = ConfigMap["service_info"]
+	endpointTemplate = ConfigMap["endpoint_template"]
+	kubernetesConf = ConfigMap["kubernetes_conf"]
+	storageConf = ConfigMap["storage_conf"]
+	MyConf = ConfigMap["my_conf"]
+	return
 }

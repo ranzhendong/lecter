@@ -12,7 +12,7 @@ func init() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
 
-func HealthCheck(serviceList interface{}) (interface{}, map[string]string, int) {
+func HealthCheck(serviceList interface{}, pingTimeout int) (interface{}, map[string]string, int) {
 	var (
 		SuccessMapList []interface{}
 		Port           int
@@ -24,7 +24,7 @@ func HealthCheck(serviceList interface{}) (interface{}, map[string]string, int) 
 		ip := v.(map[interface{}]interface{})["ip"].(string)
 		name := v.(map[interface{}]interface{})["name"].(string)
 		IPPort := ip + ":" + strconv.Itoa(Port)
-		if err := lepai_net.PingIPPort(IPPort); err != true {
+		if err := lepai_net.PingIPPort(IPPort, pingTimeout); err != true {
 			FailMapList[name] = ip
 			continue
 		}

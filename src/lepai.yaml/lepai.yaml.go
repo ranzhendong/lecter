@@ -50,6 +50,12 @@ func YamlServiceInfoMap(serviceInfo interface{}) map[string][]string {
 	return serviceInfoMap
 }
 
+func YamlMyConf(MyConf interface{}) (interval, pingTimeout int) {
+	interval = MyConf.(map[interface{}]interface{})["interval"].(int)
+	pingTimeout = MyConf.(map[interface{}]interface{})["pingtimeout"].(int)
+	return
+}
+
 func YamlServiceInfo(serviceInfo, name interface{}) (string, string) {
 	myService := serviceInfo.(map[interface{}]interface{})[name]
 	Name := myService.(map[interface{}]interface{})["name"].(string)

@@ -1,5 +1,8 @@
 # kubernetes-custom-endpoint-healthcheck
 
-&emsp;&emsp;以go语言为载体实现对于自建endpoint健康检查。
+![](https://img.shields.io/badge/language-go-blue.svg?style=plastic)
+![](https://img.shields.io/github/license/HuaJuanJiang/kubernetes-custom-endpoint-healthcheck?style=plastic)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/HuaJuanJiang/kubernetes-custom-endpoint-healthcheck?style=plastic)
 
+&emsp;&emsp;以go语言为载体实现对于自建endpoint健康检查。
 

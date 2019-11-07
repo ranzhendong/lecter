@@ -5,12 +5,12 @@ import (
 	"time"
 )
 
-func PingIPPort(ip string) (result bool) {
+func PingIPPort(ip string, pingTimeout int) (result bool) {
 	var (
 		conn net.Conn
 		err  error
 	)
-	if conn, err = net.DialTimeout("tcp", ip, 3*time.Second); err != nil {
+	if conn, err = net.DialTimeout("tcp", ip, time.Duration(pingTimeout)*time.Millisecond); err != nil {
 		//log.Println(err)
 		return
 	}
