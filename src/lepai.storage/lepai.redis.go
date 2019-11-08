@@ -26,27 +26,30 @@ func redisconnect(ipPort, passWord string) *redis.Client {
 func RedisReset(ipPort, passWord string) {
 	client := redisconnect(ipPort, passWord)
 	_ = client.FlushAll()
-	//fmt.Println(err)
+	client.Close()
 }
 
 func RedisSet(ipPort, passWord, name string, bodyContent interface{}) {
 	//fmt.Println("RedisSet:   ", bodyContent)
 	client := redisconnect(ipPort, passWord)
 	err := client.Set(name, bodyContent, 0).Err()
+	client.Close()
 	if err != nil {
 		panic(err)
 	}
 }
 
 func RedisGet(ipPort, passWord, name string) (val string) {
+	client := redisconnect(ipPort, passWord)
 	defer func() {
 		err := recover()
 		if err != nil {
 			fmt.Println(err)
 		}
+		client.Close()
 	}()
-	client := redisconnect(ipPort, passWord)
 	val, err := client.Get(name).Result()
+	client.Close()
 	if err != nil {
 		panic(err)
 	}
