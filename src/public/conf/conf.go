@@ -61,19 +61,19 @@ func InitLoadConfig() (serviceHealthCheckList, serviceInfo, endpointTemplate, ku
 	yamlContent, err = ioutil.ReadFile(confFilePath + confName)
 	if err != nil {
 		log.Println(err)
-		//第二次尝试读取配置
-		confFilePath = executePath + "/conf/"
 	} else {
 		goto AbsoluteConf
 	}
+	//第二次尝试读取配置
+	confFilePath = executePath + "/conf/"
 	yamlContent, err = ioutil.ReadFile(confFilePath + confName)
 	if err != nil {
 		log.Println(err)
-		//第三次尝试读取配置
-		confFilePath = executePath + "/src/"
 	} else {
 		goto AbsoluteConf
 	}
+	//第三次尝试读取配置
+	confFilePath = executePath + "/src/"
 	yamlContent, err = ioutil.ReadFile(confFilePath + confName)
 	if err != nil {
 		log.Println(err)

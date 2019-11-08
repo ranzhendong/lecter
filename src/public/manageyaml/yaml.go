@@ -1,10 +1,10 @@
-package lepai_yaml
+package manageyaml
 
 import (
+	"deepcopy"
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"lepai.deepcopy"
 	"log"
 	"os"
 	"reflect"
@@ -37,7 +37,7 @@ func readTokenFile() string {
 	var TokenFile, linuxTokenFile, winTokenFile string
 	operating := runtime.GOOS
 	linuxTokenFile = "var/run/secrets/kubernetes.io/serviceaccount/token"
-	winTokenFile = "C:\\Users\\Administrator\\go\\my_script\\src\\lepai.token\\token"
+	winTokenFile = "C:\\Users\\Administrator\\go\\my_script\\src\\token\\token"
 	if operating == "windows" {
 		TokenFile = strings.Replace(winTokenFile, "\\", "/", -1)
 	} else {
@@ -66,20 +66,20 @@ func readTokenFileDefault() string {
 		os.Exit(1)
 	}
 	executePath := changePath(pwd)
+	//第一次尝试读取token
 	tokenFilePath = executePath + "/conf/token"
 	tokenFileContent, err = ioutil.ReadFile(tokenFilePath)
 	if err != nil {
 		log.Println(err)
-		//第二次尝试读取配置
-		tokenFilePath = executePath + "/token"
+
 	} else {
 		goto tokenFile
 	}
+	//第二次尝试读取token
+	tokenFilePath = executePath + "/token"
 	tokenFileContent, err = ioutil.ReadFile(tokenFilePath)
 	if err != nil {
 		log.Println(err)
-		//第二次尝试读取配置
-		tokenFilePath = executePath + "/token"
 	}
 tokenFile:
 	if tokenFileContent == nil {
@@ -162,7 +162,7 @@ func YamlFactory(name, nameSpace string, Port int, SuccessMapList, endpointTempl
 
 func YamlConverter(name, namespace string, Port int, SuccessMapList, EndpointTemplate interface{}) string {
 	//map深拷贝
-	NewEndpointTemplate := lepai_deepcopy.DeepCopy(EndpointTemplate)
+	NewEndpointTemplate := deepcopy.DeepCopy(EndpointTemplate)
 	// make sure type is right
 	metadata := make(map[interface{}]interface{})
 	subsets := make(map[interface{}]interface{})

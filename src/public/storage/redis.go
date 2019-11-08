@@ -1,4 +1,4 @@
-package lepai_storage
+package storage
 
 import (
 	"fmt"

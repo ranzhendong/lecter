@@ -1,9 +1,9 @@
-package lepai_hc
+package healthcheck
 
 import (
 	"encoding/json"
-	"lepai.net"
 	"log"
+	"mynet"
 	"reflect"
 	"strconv"
 )
@@ -24,7 +24,7 @@ func HealthCheck(serviceList interface{}, pingTimeout int) (interface{}, map[str
 		ip := v.(map[interface{}]interface{})["ip"].(string)
 		name := v.(map[interface{}]interface{})["name"].(string)
 		IPPort := ip + ":" + strconv.Itoa(Port)
-		if err := lepai_net.PingIPPort(IPPort, pingTimeout); err != true {
+		if err := mynet.PingIPPort(IPPort, pingTimeout); err != true {
 			FailMapList[name] = ip
 			continue
 		}

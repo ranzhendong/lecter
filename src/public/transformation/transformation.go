@@ -1,9 +1,19 @@
-package lepai_transfromation
+package transformation
 
 import (
 	"reflect"
 	"unsafe"
 )
+
+func Any2Str(any interface{}) string {
+	switch any.(type) { //多选语句switch
+	case string:
+		return any.(interface{}).(string)
+	case interface{}:
+		return any.(interface{}).(string)
+	}
+	return "nil"
+}
 
 //self way
 func B2S(bs []uint8) string {

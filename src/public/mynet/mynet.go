@@ -1,4 +1,4 @@
-package lepai_net
+package mynet
 
 import (
 	"net"

@@ -1,4 +1,4 @@
-package lepai_deepcopy
+package deepcopy
 
 func DeepCopy(value interface{}) interface{} {
 	if valueMap, ok := value.(map[string]interface{}); ok {

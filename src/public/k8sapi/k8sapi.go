@@ -1,4 +1,4 @@
-package lepai_k8sapi
+package k8sapi
 
 import (
 	"bytes"
