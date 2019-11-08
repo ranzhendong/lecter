@@ -1,0 +1,15 @@
+language: go
+go:
+  - 1.x
+  - '1.8'
+  - '1.9'
+  - 1.13.x
+  - '1.13.1'
+script:
+  - go test -v ./...
+notifications:
+  email:
+    recipients:
+        - zhendongran@dingtalk.com
+    on_success: change
+    on_failure: always
