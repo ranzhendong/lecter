@@ -2,8 +2,8 @@ language: go
 go:
   - '1.13.x'
   - '1.13.1'
-    #script:
-        #  - go build src/main/main.go
+script:
+  - go test -v ./src/...
 env:
   - GO111MODULE=on
 notifications:
