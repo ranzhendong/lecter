@@ -15,8 +15,9 @@ kubernetes_conf:
 #  token_file: C:\Users\Administrator\go\my_script\src\lepai.token\token
   token_file: default
 
-# storage conf, one monment only one,if no password or db conf,default is "-"
+# storage conf
 storage_conf:
+# one monment only one,if no password or db conf,default is none
   redis:
     ipport: 172.16.0.61:6379
     password:

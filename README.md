@@ -9,20 +9,27 @@
 
 - 外部读取配置文件，或者通过参数 **-f** 指定配置文件地址。
 - 采用**time.Sleep**进行循环检查，没有使用**time.NewTicker**。
-
 - 脚本建议跑在单独的namespace和pod当中，使用serveraccount实现对ApiServer访问读写。
+
+
+
+[TOC]
+
+
 
 ### 配置文件
 
 #### 脚本配置 my_conf
 
-**interval**  健康检查间隔 
+​		基础脚本运行配置。
+
+##### **interval**  健康检查间隔 
 
 ```yaml
 interval: 2000
 ```
 
-**pingtimeout**  ping超时时间
+##### **pingtimeout**  ping超时时间
 
 &emsp;&emsp;指的是通过net包对ip port进行4层访问测试的超时时间。
 
@@ -30,19 +37,19 @@ interval: 2000
 pingtimeout: 3000
 ```
 
+#### k8s配置 kubernetes_conf
 
+​		通过这个配置实现对k8sApiServer基本读写配置。
 
-#### k8s访问配置 kubernetes_conf
+##### **url**  访问k8s集群ApiServer地址
 
-**url**  访问k8s集群ApiServer地址
-
-​		在pod当中运行，可以填写域名来实现内部访问，示例配置为外部访问。
+&emsp;&emsp;在pod当中运行，可以填写域名来实现内部访问，示例配置为外部访问。
 
 ```yaml
 url: https://172.16.0.60:6443
 ```
 
-**endpointapi**  访问endpoint资源api
+##### **endpointapi**  访问endpoint资源api
 
 &emsp;&emsp;根据k8s版本不同，api的路径上有所不同，需要自己进行配置。
 
@@ -52,7 +59,7 @@ url: https://172.16.0.60:6443
 endpointapi: /api/v1/namespaces/myNameSpaces/endpoints/myEndPoints
 ```
 
-**content_type**  写入时数据包类型
+##### **content_type**  写入时数据包类型
 
 &emsp;&emsp;因为写在代码当中，因此不建议更改，保持**application/yaml**就好。
 
@@ -60,7 +67,7 @@ endpointapi: /api/v1/namespaces/myNameSpaces/endpoints/myEndPoints
 content_type: application/yaml
 ```
 
-**token_file**  访问k8s集群ApiServer的token
+##### **token_file**  访问k8s集群ApiServer的token
 
 &emsp;&emsp;如果为空，不填：
 
@@ -77,19 +84,128 @@ content_type: application/yaml
 - 例如：C:\Users\Administrator\go\my_script\src\lepai.token\token
 
 
-&emsp;&emsp;因此建议在pod当中使用挂载的serveraccount文件来实现。也就是`/var/run/secrets/kubernetes.io/serviceaccount/token`
+&emsp;&emsp;**因此建议在pod当中使用挂载的serveraccount文件来实现。也就是`/var/run/secrets/kubernetes.io/serviceaccount/token`。**
 
 ```yaml
 token_file: default
 ```
 
+#### 存储配置 storage_conf
 
+&emsp;&emsp;对健康检查信息进行存储，方便迭代。
 
+&emsp;&emsp;后期计划加入ectd存储选项，保证多个相同脚本同时运行，分布式锁的实现。
 
+##### **redis**  redis存储配置
 
+```yaml
+  redis:
+    ipport: 172.16.0.61:6379
+    password:
+```
 
+##### **ipport**  redis IP端口配置
 
+```yaml
+ipport: 172.16.0.61:6379
+```
 
+##### **password**  redis访问auth
 
+&emsp;&emsp;如果没有密码，保持空就可以
+
+```yaml
+password: 123
+```
+
+#### service配置 service_info
+
+&emsp;&emsp;这部分配置主要是为了保证endpoint对应的service信息一致，也就是需要通过`/api/v1/namespaces/myNameSpaces/endpoints/myEndPoints`来对某个endpoint资源实现访问，示例当中配置了redis集群，eqmx集群以及ceph集群。
+
+&emsp;&emsp;最后为了保证可用性，可以自行通过命令行访问**k8sApiServer**的endpoint接口：`/api/v1/namespaces/myNameSpaces/endpoints/myEndPoints`来验证，注意需要对**myNameSpaces**和**myEndPoints**进行替换。
+
+##### **redis**  示例名称（可自定义）
+
+&emsp;&emsp;但是需要和下面的保持一致。
+
+```yaml
+service_info:
+  redis:
+  emqx:
+  ceph:
+```
+
+##### **namespace**  endpoint命名空间
+
+```yaml
+namespace: default
+```
+
+##### **name**  endpoint名称
+
+```yaml
+name: redis
+```
+
+#### endpoint健康检查配置  service_healthcheck_list
+
+&emsp;&emsp;这部分是配置是告诉脚本这些ip地址和port端口是正常的，如果检测到从k8sApiServer取出的数据和它不一致，那么就可以确定是有ip地址对应的节点down。
+
+##### **redis**  示例名称（可自定义）
+
+&emsp;&emsp;注意需要保持和上面的service_info当中的名称保持一致。
+
+```yaml
+service_healthcheck_list:
+  redis:
+  emqx:
+  ceph:
+```
+
+##### **port**  端口
+
+&emsp;&emsp;指定endpoint访问端口其实也就是健康检查端口。
+
+```yaml
+port: 38080
+```
+
+##### **iplist**  ip列表
+
+&emsp;&emsp;指定一个服务的多个节点ip信息。
+
+&emsp;&emsp;需要通过name进行区分，方便后面的钉钉报警组件（还未开发）
+
+```yaml
+  - iplist:
+    - name: node-01
+      ip: 172.16.0.61
+    - name: node-02
+      ip: 172.16.0.62
+    - name: node-03
+      ip: 172.16.0.63
+```
+
+#### endpoint.yaml配置 endpoint_template
+
+&emsp;&emsp;模板文件，需要通过它将主要的**subsets**字段进行替换，对通过健康检查的iplist进行更新，然后写入到k8s，实现覆盖，保证service访问。
+
+&emsp;&emsp;这部分除非k8s版本不一致导致需要更改**apiVersion**字段之外，其他的不建议更改，如果因为k8s导致**subsets**字段以及结构不一致的，则不建议使用该脚本，因为脚本对于字符的处理是基于下面的模板进行的，也可以进行自己需求的二次开发。
+
+```yaml
+endpoint_template:
+  kind: Endpoints
+  apiVersion: v1
+  metadata:
+    name: ceph
+    namespace: default
+  subsets:
+    - addresses:
+        - ip: 10.0.0.71
+        - ip: 10.0.0.72
+      ports:
+        - port: 8080
+          protocol: TCP
+```
 
 
