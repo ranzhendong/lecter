@@ -41,17 +41,25 @@
 
 ## 配置
 
+&emsp;&emsp;通过[config.yaml](https://github.com/HuaJuanJiang/lecter/blob/master/src/config.yaml)进行配置文件管理，配置文件位置建议和脚本同级或者在同级目录下的config文件夹下。
+
+
+
 ### 脚本配置my_conf
 
-​		基础脚本运行配置。
+&emsp;&emsp;基础脚本运行配置。
 
-#### **interval**-健康检查间隔 
+
+
+#### interval-健康检查间隔 
 
 ```yaml
 interval: 2000
 ```
 
-#### **pingtimeout**-ping超时时间
+
+
+#### pingtimeout-ping超时时间
 
 &emsp;&emsp;指的是通过net包对ip port进行4层访问测试的超时时间。
 
@@ -59,11 +67,15 @@ interval: 2000
 pingtimeout: 3000
 ```
 
+
+
 ### k8s配置kubernetes_conf
 
 ​		通过这个配置实现对k8sApiServer基本读写配置。
 
-#### **url**-访问k8s集群ApiServer地址
+
+
+#### url-访问k8s集群ApiServer地址
 
 &emsp;&emsp;在pod当中运行，可以填写域名来实现内部访问，示例配置为外部访问。
 
@@ -71,7 +83,9 @@ pingtimeout: 3000
 url: https://172.16.0.60:6443
 ```
 
-#### **endpointapi**-访问endpoint资源api
+
+
+#### endpointapi-访问endpoint资源api
 
 &emsp;&emsp;根据k8s版本不同，api的路径上有所不同，需要自己进行配置。
 
@@ -81,7 +95,9 @@ url: https://172.16.0.60:6443
 endpointapi: /api/v1/namespaces/myNameSpaces/endpoints/myEndPoints
 ```
 
-#### **content_type**-写入时数据包类型
+
+
+#### content_type-写入时数据包类型
 
 &emsp;&emsp;因为写在代码当中，因此不建议更改，保持**application/yaml**就好。
 
@@ -89,7 +105,9 @@ endpointapi: /api/v1/namespaces/myNameSpaces/endpoints/myEndPoints
 content_type: application/yaml
 ```
 
-#### **token_file**-访问k8s集群ApiServer的token
+
+
+#### token_file-访问k8s集群ApiServer的token
 
 &emsp;&emsp;如果为空，不填：
 
@@ -112,13 +130,17 @@ content_type: application/yaml
 token_file: default
 ```
 
+
+
 ### 存储配置storage_conf
 
 &emsp;&emsp;对健康检查信息进行存储，方便迭代。
 
 &emsp;&emsp;后期计划加入ectd存储选项，保证多个相同脚本同时运行，分布式锁的实现。
 
-#### **redis**-redis存储配置
+
+
+#### redis-redis存储配置
 
 ```yaml
   redis:
@@ -126,13 +148,17 @@ token_file: default
     password:
 ```
 
-#### **ipport**-redisIP端口配置
+
+
+#### ipport-redisIP端口配置
 
 ```yaml
 ipport: 172.16.0.61:6379
 ```
 
-#### **password**-redis访问auth
+
+
+#### password-redis访问auth
 
 &emsp;&emsp;如果没有密码，保持空就可以
 
@@ -140,13 +166,17 @@ ipport: 172.16.0.61:6379
 password: 123
 ```
 
+
+
 ### service配置service_info
 
 &emsp;&emsp;这部分配置主要是为了保证endpoint对应的service信息一致，也就是需要通过`/api/v1/namespaces/myNameSpaces/endpoints/myEndPoints`来对某个endpoint资源实现访问，示例当中配置了redis集群，eqmx集群以及ceph集群。
 
 &emsp;&emsp;最后为了保证可用性，可以自行通过命令行访问**k8sApiServer**的endpoint接口：`/api/v1/namespaces/myNameSpaces/endpoints/myEndPoints`来验证，注意需要对**myNameSpaces**和**myEndPoints**进行替换。
 
-#### **redis**-示例名称
+
+
+#### redis-示例名称
 
 &emsp;&emsp;可自定义，但是需要和下面的保持一致。
 
@@ -157,11 +187,15 @@ service_info:
   ceph:
 ```
 
-#### **namespace**-endpoint命名空间
+
+
+#### namespace-endpoint命名空间
 
 ```yaml
 namespace: default
 ```
+
+
 
 #### **name**-endpoint名称
 
@@ -169,11 +203,13 @@ namespace: default
 name: redis
 ```
 
+
+
 ### endpoint健康检查配置service_healthcheck_list
 
 &emsp;&emsp;这部分是配置是告诉脚本这些ip地址和port端口是正常的，如果检测到从k8sApiServer取出的数据和它不一致，那么就可以确定是有ip地址对应的节点down。
 
-#### **redis**-示例名称
+#### redis-示例名称
 
 &emsp;&emsp;可自定义，注意需要保持和上面的service_info当中的名称保持一致。
 
@@ -184,7 +220,9 @@ service_healthcheck_list:
   ceph:
 ```
 
-#### **port**-端口
+
+
+#### port-端口
 
 &emsp;&emsp;指定endpoint访问端口其实也就是健康检查端口。
 
@@ -192,7 +230,9 @@ service_healthcheck_list:
 port: 38080
 ```
 
-#### **iplist**-ip列表
+
+
+#### iplist-ip列表
 
 &emsp;&emsp;指定一个服务的多个节点ip信息。
 
@@ -207,6 +247,8 @@ port: 38080
     - name: node-03
       ip: 172.16.0.63
 ```
+
+
 
 ### endpoint.yaml配置endpoint_template
 
@@ -229,5 +271,41 @@ endpoint_template:
         - port: 8080
           protocol: TCP
 ```
+
+
+
+## 使用
+
+&emsp;&emsp;使用方式在前面有叙述
+
+### 编译
+
+```shell
+$ go build ./src/...
+```
+
+
+
+### 运行
+
+```powershell
+main.exe
+
+2019/11/25 17:58:34 main.go:94: 检查次数:[ 1 ]
+2019/11/25 17:58:36 main.go:94: 检查次数:[ 2 ]
+2019/11/25 17:58:38 main.go:94: 检查次数:[ 3 ]
+2019/11/25 17:58:39 healthcheck.go:55: {Name:redis} {Addresses:[map[ip:172.16.0.61]] != SuccessMapList: [map[ip:172.16.0.61] map[ip:172.16.0.62]]}
+2019/11/25 17:58:40 main.go:94: 检查次数:[ 4 ]
+2019/11/25 17:58:41 healthcheck.go:52: {Name:redis} {Addresses:[map[ip:172.16.0.61] map[ip:172.16.0.62]] == SuccessMapList: [map[ip:172.16.0.61] map[ip:172.16.0.62]]}
+redis: nil
+2019/11/25 17:58:41 healthcheck.go:41: RedisListGet CAN'T GET
+2019/11/25 17:58:41 healthcheck.go:52: {Name:ceph} {Addresses:[map[ip:172.16.0.61] map[ip:172.16.0.62]] == SuccessMapList: [map[ip:172.16.0.61] map[ip:172.16.0.62]]}
+2019/11/25 17:58:42 main.go:94: 检查次数:[ 5 ]
+2019/11/25 17:58:43 healthcheck.go:52: {Name:redis} {Addresses:[map[ip:172.16.0.61] map[ip:172.16.0.62]] == SuccessMapList: [map[ip:172.16.0.61] map[ip:172.16.0.62]]}
+redis: nil
+2019/11/25 17:58:43 healthcheck.go:41: RedisListGet CAN'T GET
+2019/11/25 17:58:43 healthcheck.go:52: {Name:ceph} {Addresses:[map[ip:172.16.0.61] map[ip:172.16.0.62]] == SuccessMapList: [map[ip:172.16.0.61] map[ip:172.16.0.62]]}
+```
+
 
 
