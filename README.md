@@ -25,10 +25,10 @@
       - [token_file访问k8s集群ApiServer的token](#token_file-访问k8s集群ApiServer的token )
     - [存储配置storage_conf](#存储配置storage_conf)
       - [redis-redis存储配置](#redis-redis存储配置 )
-      - [ipport-redis IP端口配置](#ipport-redis IP端口配置 )
+      - [ipport-redis IP端口配置](#ipport-redisIP端口配置 )
       - [password-redis访问auth](#password-redis访问auth)
     - [service配置service_info](#service配置service_info)
-      - [redis -示例名称](#redis -示例名称 )
+      - [redis-示例名称](#redis-示例名称 )
       - [namespace-endpoint命名空间](#namespace-endpoint命名空间 )
       - [name-endpoint名称](#name-endpoint名称 )
     - [endpoint健康检查配置service_healthcheck_list](#endpoint健康检查配置service_healthcheck_list )
@@ -126,7 +126,7 @@ token_file: default
     password:
 ```
 
-#### **ipport**-redis IP端口配置
+#### **ipport**-redisIP端口配置
 
 ```yaml
 ipport: 172.16.0.61:6379
@@ -146,7 +146,7 @@ password: 123
 
 &emsp;&emsp;最后为了保证可用性，可以自行通过命令行访问**k8sApiServer**的endpoint接口：`/api/v1/namespaces/myNameSpaces/endpoints/myEndPoints`来验证，注意需要对**myNameSpaces**和**myEndPoints**进行替换。
 
-#### **redis** -示例名称
+#### **redis**-示例名称
 
 &emsp;&emsp;可自定义，但是需要和下面的保持一致。
 
