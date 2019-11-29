@@ -1,4 +1,4 @@
-module github.com/HuaJuanJiang/kubernetes-custom-endpoint-healthcheck
+module lecter
 
 go 1.13
 
