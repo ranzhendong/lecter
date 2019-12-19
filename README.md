@@ -1,9 +1,9 @@
 # kubernetes-custom-endpoint-healthcheck
 
-![Travis (.org) branch](https://img.shields.io/travis/HuaJuanJiang/lecter/master?style=plastic)
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/HuaJuanJiang/lecter?include_prereleases&style=plastic)
-![GitHub last commit (branch)](https://img.shields.io/github/last-commit/HuaJuanJiang/lecter/master?style=plastic)
-![](https://img.shields.io/github/license/HuaJuanJiang/lecter?style=plastic)
+![Travis (.org) branch](https://img.shields.io/travis/ranzhendong/lecter/master?style=plastic)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/ranzhendong/lecter?include_prereleases&style=plastic)
+![GitHub last commit (branch)](https://img.shields.io/github/last-commit/ranzhendong/lecter/master?style=plastic)
+![](https://img.shields.io/github/license/ranzhendong/lecter?style=plastic)
 
 &emsp;&emsp;以go语言为载体实现对于kubernetes集群当中自建外部访问endpoint资源的健康检查。
 
@@ -41,7 +41,7 @@
 
 ## 配置
 
-&emsp;&emsp;通过[config.yaml](https://github.com/HuaJuanJiang/lecter/blob/master/src/config.yaml)进行配置文件管理，配置文件位置建议和脚本同级或者在同级目录下的config文件夹下。
+&emsp;&emsp;通过[config.yaml](https://github.com/ranzhendong/lecter/blob/master/src/config.yaml)进行配置文件管理，配置文件位置建议和脚本同级或者在同级目录下的config文件夹下。
 
 
 
