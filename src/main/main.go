@@ -77,16 +77,6 @@ func main() {
 	// 定时任务为什么选择sleep而不是tick，是因为我们需要将前一次的结果作为下一次运行的参考依据，因此不建议使用tick
 	//tick其实是每次固定时间执行，但是执行命令的时间实际上不关系的，只会在下一时刻再次触发执行。
 	//经过测试之后，发现通过go协程来实现，可以快速控制语句执行。
-	//t := time.NewTicker(time.Duration(interval) * time.Millisecond)
-	//for {
-	//	select {
-	//	case <-t.C:
-	//		log.Println("t1定时器")
-	//		time.Sleep(time.Duration(interval) * time.Millisecond)
-	//		secondLoop(ipPort, passWord, url, tokenFile, contentType, endPointApi, endpointTemplate, serviceHealthCheckList, serviceInfo)
-	//		//t.Stop()
-	//	}
-	//}
 
 	var count int
 	count = 1
