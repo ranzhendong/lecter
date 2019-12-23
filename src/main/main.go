@@ -60,10 +60,8 @@ func secondLoop(pingTimeout int, ipPort, passWord, url, tokenFile, contentType, 
 }
 
 func main() {
-	//conf.InitLoadConfig()
 	// read yaml conf from file
 	serviceHealthCheckList, serviceInfo, endpointTemplate, kubernetesConf, storageConf, MyConf := conf.InitLoadConfig()
-	//_, _, _, _, _, MyConf := conf.InitLoadConfig()
 	// get my conf info
 	interval, pingTimeout := manageyaml.YamlMyConf(MyConf)
 	// get k8sapiserver info
