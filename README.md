@@ -1,6 +1,7 @@
 # kubernetes-custom-endpoint-healthcheck
 
-![Travis (.org) branch](https://img.shields.io/travis/ranzhendong/lecter/master?style=plastic)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ranzhendong/lecter/LecterCI?label=GithubBuild&logo=github&style=plastic)
+![Travis (.org) branch](https://img.shields.io/travis/ranzhendong/lecter?label=TravisBulid&logo=travis&style=plastic)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/ranzhendong/lecter?include_prereleases&style=plastic)
 ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/ranzhendong/lecter/master?style=plastic)
 ![](https://img.shields.io/github/license/ranzhendong/lecter?style=plastic)

@@ -1,4 +1,4 @@
-name: MortyCI
+name: LecterCI
 
 on: push
 
