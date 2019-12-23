@@ -1,9 +1,6 @@
 name: MortyCI
 
 on: push
-  push:
-    branches:
-      - master
 
 jobs:
   build:
